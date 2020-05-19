@@ -34,19 +34,19 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-            {{- if .Values.deployment.provider.google }}
+            {{- if .Values.forward_auth_config.provider.google }}
             - name: PROVIDERS_GOOGLE_CLIENT_ID
-            {{- else if .Values.deployment.provider.oidc }}
+            {{- else if .Values.forward_auth_config.provider.oidc }}
             - name: DEFAULT_PROVIDER
               value: oidc
             - name: PROVIDERS_OIDC_ISSUER_URL
-              value: {{ .Values.deployment.issuer.url }}
+              value: {{ .Values.forward_auth_config.issuer.url }}
             - name: PROVIDERS_OIDC_CLIENT_ID
             {{- end }}
-              value: {{ .Values.deployment.client.id }}
-            {{- if .Values.deployment.provider.google }}
+              value: {{ .Values.forward_auth_config.client.id }}
+            {{- if .Values.forward_auth_config.provider.google }}
             - name: PROVIDERS_GOOGLE_CLIENT_SECRET
-            {{- else if .Values.deployment.provider.oidc }}
+            {{- else if .Values.forward_auth_config.provider.oidc }}
             - name: PROVIDERS_OIDC_CLIENT_SECRET
             {{- end }}
               valueFrom:
@@ -59,14 +59,14 @@ spec:
                   name: traefik-forward-auth-secrets
                   key: SECRET
             - name: INSECURE_COOKIE
-              value: {{ .Values.deployment.cookie.insecure | quote }}
+              value: {{ .Values.forward_auth_config.cookie.insecure | quote }}
             - name: COOKIE_DOMAIN
-              value: {{ .Values.deployment.cookie.domain }}
-            {{- if .Values.deployment.domain }}
+              value: {{ .Values.forward_auth_config.cookie.domain }}
+            {{- if .Values.forward_auth_config.domain }}
             - name: DOMAIN
-              value: {{ .Values.deployment.domain }}
+              value: {{ .Values.forward_auth_config.domain }}
             {{- end }}
-            {{- if .Values.deployment.auth }}
+            {{- if .Values.forward_auth_config.auth }}
             - name: AUTH_HOST
               value: {{ .Values.ingress.host }}
             {{- end }}

@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "traefik-forward-auth.fullname" . }}
+  labels:
+    {{- include "traefik-forward-auth.labels" . | nindent 4 }}
+data:
+  config.ini: |
+    # Log level (default: warn) [$LOG_LEVEL]
+    # log-level = [trace|debug|info|warn|error|fatal|panic]
+
+    # Log format (default: text) [$LOG_FORMAT]
+    # log-format = [text|json|pretty]
+
+    # Cookie Name (default: _forward_auth) [$COOKIE_NAME]
+    # cookie-name =
+
+    # CSRF Cookie Name (default: _forward_auth_csrf) [$CSRF_COOKIE_NAME]
+    # csrf-cookie-name =
+
+    # Default action (default: auth) [$DEFAULT_ACTION]
+    # default-action = [auth|allow]
+
+    # Only allow given email domains, can be set multiple times [$DOMAIN]
+    # domain =
+
+    # Only allow given email addresses, can be set multiple times [$WHITELIST]
+    # whitelist=
+
+    # Rule definitions, param can be: "action", "rule" or "provider"
+    # rule.<name>.<param>=
+
+    # Single host to use when returning from 3rd party auth [$AUTH_HOST]
+    auth-host = {{ .Values.ingress.host }}
+
+    # Single host to use when returning from 3rd party auth [$AUTH_HOST]
+    cookie-domain = {{ .Values.forward_auth_config.cookie_domain }}
+
+    # Use insecure cookies [$INSECURE_COOKIE]
+    insecure-cookie = {{ .Values.forward_auth_config.insecure_cookie }}
+
+    # Default provider (default: google) [$DEFAULT_PROVIDER]
+    default-provider = {{ .Values.forward_auth_config.provider }}
+
+    # Lifetime in seconds (default: 43200) [$LIFETIME]
+    lifetime = {{ .Values.forward_auth_config.lifetime }}
+
+    # Callback URL Path (default: /_oauth) [$URL_PATH]
+    url-path = {{ .Values.forward_auth_config.url_path }}
+
+    # Client ID [$PROVIDERS_GOOGLE_CLIENT_ID]
+    providers.google.client-id = {{ .Values.forward_auth_config.client_id }}
+
+    # Space separated list of OpenID prompt options [$PROVIDERS_GOOGLE_PROMPT]
+    providers.google.prompt = {{ .Values.forward_auth_config.prompt }}
+
+    # Issuer URL [$PROVIDERS_OIDC_ISSUER_URL]
+    providers.oidc.issuer-url = {{ .Values.forward_auth_config.issuer_url }}
+
+    # Client ID [$PROVIDERS_OIDC_CLIENT_ID]
+    providers.oidc.client-id = {{ .Values.forward_auth_config.client_id }}

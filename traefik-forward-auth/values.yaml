@@ -77,16 +77,21 @@ tolerations: []
 affinity: {}
 
 forward_auth_config:
-  provider:
-    # google: false
-    oidc: true
-  issuer:
-    url: https://example.auth0.com/
-  client:
-    id: fixme
-    secret:
-  secret:
-  cookie:
-    insecure: false
-    # Cookie domain
-    domain: example.bdrk.ai
+  cookie_domain: example.bdrk.ai
+  insecure_cookie: false
+  lifetime: 36000
+  url_path: /_oauth
+
+  # Auth provider can be either "oidc" or "google"
+  provider: oidc
+  client_id: fixme
+
+  # Google provider specific
+  prompt: ""
+
+  # OIDC provider specific
+  issuer_url: https://example.auth0.com/
+
+  # Secrets
+  secret: ""
+  client_secret: ""

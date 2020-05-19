@@ -34,42 +34,26 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-            {{- if .Values.forward_auth_config.provider.google }}
-            - name: PROVIDERS_GOOGLE_CLIENT_ID
-            {{- else if .Values.forward_auth_config.provider.oidc }}
-            - name: DEFAULT_PROVIDER
-              value: oidc
-            - name: PROVIDERS_OIDC_ISSUER_URL
-              value: {{ .Values.forward_auth_config.issuer.url }}
-            - name: PROVIDERS_OIDC_CLIENT_ID
-            {{- end }}
-              value: {{ .Values.forward_auth_config.client.id }}
-            {{- if .Values.forward_auth_config.provider.google }}
+            - name: CONFIG
+              value: /config/config.ini
             - name: PROVIDERS_GOOGLE_CLIENT_SECRET
-            {{- else if .Values.forward_auth_config.provider.oidc }}
-            - name: PROVIDERS_OIDC_CLIENT_SECRET
-            {{- end }}
               valueFrom:
                 secretKeyRef:
-                  name: traefik-forward-auth-secrets
+                  name: {{ include "traefik-forward-auth.fullname" . }}
+                  key: CLIENT_SECRET
+            - name: PROVIDERS_OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "traefik-forward-auth.fullname" . }}
                   key: CLIENT_SECRET
             - name: SECRET
               valueFrom:
                 secretKeyRef:
-                  name: traefik-forward-auth-secrets
+                  name: {{ include "traefik-forward-auth.fullname" . }}
                   key: SECRET
-            - name: INSECURE_COOKIE
-              value: {{ .Values.forward_auth_config.cookie.insecure | quote }}
-            - name: COOKIE_DOMAIN
-              value: {{ .Values.forward_auth_config.cookie.domain }}
-            {{- if .Values.forward_auth_config.domain }}
-            - name: DOMAIN
-              value: {{ .Values.forward_auth_config.domain }}
-            {{- end }}
-            {{- if .Values.forward_auth_config.auth }}
-            - name: AUTH_HOST
-              value: {{ .Values.ingress.host }}
-            {{- end }}
+          volumeMounts:
+            - name: config
+              mountPath: /config
           ports:
             - name: http
               containerPort: 4181
@@ -96,3 +80,7 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "traefik-forward-auth.fullname" . }}

@@ -32,6 +32,9 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
+podDisruptionBudget:
+  minAvailable: 1
+
 service:
   labels: {}
   annotations: {}
@@ -49,7 +52,7 @@ ingress:
     ingress.kubernetes.io/frame-deny: "true"
     ingress.kubernetes.io/hsts-max-age: "315360000"
     ingress.kubernetes.io/referrer-policy: strict-origin
-  host: example.bdrk.ai
+  host: auth.example.bdrk.ai
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:

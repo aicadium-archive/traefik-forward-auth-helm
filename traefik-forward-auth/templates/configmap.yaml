@@ -33,7 +33,7 @@ data:
     # Single host to use when returning from 3rd party auth [$AUTH_HOST]
     auth-host = {{ .Values.ingress.host }}
 
-    # Single host to use when returning from 3rd party auth [$AUTH_HOST]
+    # Domain to set auth cookie on, can be set multiple times [$COOKIE_DOMAIN]
     cookie-domain = {{ .Values.forward_auth_config.cookie_domain }}
 
     # Use insecure cookies [$INSECURE_COOKIE]

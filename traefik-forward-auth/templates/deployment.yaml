@@ -1,32 +1,38 @@
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: {{ include "traefik-forward-auth.fullname" . }}
   labels:
-    app: traefik-forward-auth
-    {{- if .Values.deployment.labels }}
-    {{ toYaml .Values.deployment.labels | indent 4}}
-    {{- end }}
-  annotations:
-    {{ toYaml .Values.deployment.annotations | indent 4 }}
-  name: traefik-forward-auth
-  namespace: {{ .Values.namespace | default "kube-system" }}
+    {{- include "traefik-forward-auth.labels" . | nindent 4 }}
 spec:
-  replicas: 1
+{{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+{{- end }}
   selector:
     matchLabels:
-      app: traefik-forward-auth
+      {{- include "traefik-forward-auth.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
       labels:
-        app: traefik-forward-auth
+        {{- include "traefik-forward-auth.selectorLabels" . | nindent 8 }}
     spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "traefik-forward-auth.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: traefik-forward-auth
-          image: thomseddon/traefik-forward-auth
-          ports:
-            - containerPort: 4181
-              protocol: TCP
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             {{- if .Values.deployment.provider.google }}
             - name: PROVIDERS_GOOGLE_CLIENT_ID
@@ -64,11 +70,29 @@ spec:
             - name: AUTH_HOST
               value: {{ .Values.deployment.auth.host_url }}
             {{- end }}
+          ports:
+            - name: http
+              containerPort: 4181
+              protocol: TCP
           livenessProbe:
-            tcpSocket:
-              port: 4181
-            initialDelaySeconds: 20
-            failureThreshold: 3
-            successThreshold: 1
-            periodSeconds: 10
-            timeoutSeconds: 2
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

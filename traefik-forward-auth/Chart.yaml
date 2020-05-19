@@ -1,0 +1,9 @@
+apiVersion: v2
+name: traefik-forward-auth
+description: Traefik Forward Auth
+type: application
+version: 1.0.0
+appVersion: 2.1.0
+home: https://github.com/basisai/traefik-forward-auth-helm
+sources:
+  - https://github.com/thomseddon/traefik-forward-auth

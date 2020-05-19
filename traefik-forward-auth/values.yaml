@@ -44,14 +44,16 @@ service:
 ingress:
   enabled: false
   annotations:
-    kubernetes.io/ingress.class: traefik
-    traefik.ingress.kubernetes.io/preserve-host: "true"
-    ingress.kubernetes.io/protocol: http
-    ingress.kubernetes.io/content-type-nosniff: "true"
+    ingress.kubernetes.io/auth-type: forward
+    ingress.kubernetes.io/auth-response-headers: X-Forwarded-User
+    ingress.kubernetes.io/auth-url: http://traefik-forward-auth
     ingress.kubernetes.io/force-hsts: "true"
     ingress.kubernetes.io/frame-deny: "true"
     ingress.kubernetes.io/hsts-max-age: "315360000"
+    ingress.kubernetes.io/protocol: http
     ingress.kubernetes.io/referrer-policy: strict-origin
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/preserve-host: "true"
   host: auth.example.bdrk.ai
   tls: []
   #  - secretName: chart-example-tls

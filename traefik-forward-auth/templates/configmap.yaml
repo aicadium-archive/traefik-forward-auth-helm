@@ -6,8 +6,8 @@ metadata:
     {{- include "traefik-forward-auth.labels" . | nindent 4 }}
 data:
   config.ini: |
-    # Log level (default: warn) [$LOG_LEVEL]
-    # log-level = [trace|debug|info|warn|error|fatal|panic]
+    # Log level (default: warn) [$LOG_LEVEL] [trace|debug|info|warn|error|fatal|panic]
+    log-level = info
 
     # Log format (default: text) [$LOG_FORMAT]
     # log-format = [text|json|pretty]
@@ -48,14 +48,18 @@ data:
     # Callback URL Path (default: /_oauth) [$URL_PATH]
     url-path = {{ .Values.forward_auth_config.url_path }}
 
+    {{- if eq .Values.forward_auth_config.provider "google" }}
     # Client ID [$PROVIDERS_GOOGLE_CLIENT_ID]
     providers.google.client-id = {{ .Values.forward_auth_config.client_id }}
 
     # Space separated list of OpenID prompt options [$PROVIDERS_GOOGLE_PROMPT]
     providers.google.prompt = {{ .Values.forward_auth_config.prompt }}
+    {{- end }}
 
+    {{- if eq .Values.forward_auth_config.provider "oidc" }}
     # Issuer URL [$PROVIDERS_OIDC_ISSUER_URL]
     providers.oidc.issuer-url = {{ .Values.forward_auth_config.issuer_url }}
 
     # Client ID [$PROVIDERS_OIDC_CLIENT_ID]
     providers.oidc.client-id = {{ .Values.forward_auth_config.client_id }}
+    {{- end }}

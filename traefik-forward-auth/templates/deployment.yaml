@@ -68,7 +68,7 @@ spec:
             {{- end }}
             {{- if .Values.deployment.auth }}
             - name: AUTH_HOST
-              value: {{ .Values.deployment.auth.host_url }}
+              value: {{ .Values.ingress.host }}
             {{- end }}
           ports:
             - name: http

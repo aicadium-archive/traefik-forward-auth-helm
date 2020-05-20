@@ -7,10 +7,10 @@ metadata:
 data:
   config.ini: |
     # Log level (default: warn) [$LOG_LEVEL] [trace|debug|info|warn|error|fatal|panic]
-    log-level = info
+    log-level = {{ .Values.forward_auth_config.log_level }}
 
-    # Log format (default: text) [$LOG_FORMAT]
-    # log-format = [text|json|pretty]
+    # Log format (default: text) [$LOG_FORMAT] [text|json|pretty]
+    log-format = {{ .Values.forward_auth_config.log_format }}
 
     # Cookie Name (default: _forward_auth) [$COOKIE_NAME]
     # cookie-name =

@@ -82,6 +82,9 @@ tolerations: []
 affinity: {}
 
 forward_auth_config:
+  log_level: info
+  log_format: text
+
   cookie_domain: example.bdrk.ai
   insecure_cookie: false
   lifetime: 36000

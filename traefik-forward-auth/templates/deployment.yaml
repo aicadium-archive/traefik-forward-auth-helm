@@ -5,9 +5,9 @@ metadata:
   labels:
     {{- include "traefik-forward-auth.labels" . | nindent 4 }}
 spec:
-{{- if not .Values.autoscaling.enabled }}
+  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
-{{- end }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "traefik-forward-auth.selectorLabels" . | nindent 6 }}

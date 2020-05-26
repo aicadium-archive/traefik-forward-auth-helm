@@ -3,6 +3,19 @@ entries:
   traefik-forward-auth:
   - apiVersion: v2
     appVersion: 2.1.0
+    created: "2020-05-26T12:27:56.1202385Z"
+    description: Traefik Forward Auth
+    digest: 6de8250cf7a258169e70326dc050557587340f543ac24b893575df3e3adcf848
+    home: https://github.com/basisai/traefik-forward-auth-helm
+    name: traefik-forward-auth
+    sources:
+    - https://github.com/thomseddon/traefik-forward-auth
+    type: application
+    urls:
+    - https://github.com/basisai/traefik-forward-auth-helm/releases/download/traefik-forward-auth-1.2.1/traefik-forward-auth-1.2.1.tgz
+    version: 1.2.1
+  - apiVersion: v2
+    appVersion: 2.1.0
     created: "2020-05-26T05:25:59.972273424Z"
     description: Traefik Forward Auth
     digest: 0cb1ef70af47d2f4f7f2a2cbc68827516e25bfd778093676de155416c2ddf374

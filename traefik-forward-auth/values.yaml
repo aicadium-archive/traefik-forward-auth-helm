@@ -1,0 +1,152 @@
+replicaCount: 1
+
+image:
+  repository: thomseddon/traefik-forward-auth
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart version.
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+podSecurityPolicies:
+  annotations:
+    seccomp.security.alpha.kubernetes.io/allowedProfileNames: "docker/default,runtime/default"
+    apparmor.security.beta.kubernetes.io/allowedProfileNames: "runtime/default"
+    seccomp.security.alpha.kubernetes.io/defaultProfileName: "runtime/default"
+    apparmor.security.beta.kubernetes.io/defaultProfileName: "runtime/default"
+  labels: {}
+  spec:
+    privileged: false
+    allowPrivilegeEscalation: false
+    volumes:
+      - configMap
+      - emptyDir
+      - projected
+      - secret
+      - downwardAPI
+    hostNetwork: false
+    hostIPC: false
+    hostPID: false
+    fsGroup:
+      ranges:
+      - max: 65535
+        min: 1
+      rule: MustRunAs
+    runAsGroup:
+      ranges:
+      - max: 65535
+        min: 1
+      rule: MustRunAs
+    runAsUser:
+      ranges:
+      - max: 65535
+        min: 1
+      rule: MustRunAs
+    supplementalGroups:
+      ranges:
+      - max: 65535
+        min: 1
+      rule: MustRunAs
+    readOnlyRootFilesystem: true
+    seLinux:
+      rule: RunAsAny
+    forbiddenSysctls:
+      - '*'
+
+priorityClassName: ""
+
+podDisruptionBudget:
+  minAvailable: 1
+
+service:
+  labels: {}
+  annotations: {}
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  annotations:
+    ingress.kubernetes.io/auth-type: forward
+    ingress.kubernetes.io/auth-response-headers: X-Forwarded-User
+    ingress.kubernetes.io/auth-url: http://traefik-forward-auth
+    ingress.kubernetes.io/force-hsts: "true"
+    ingress.kubernetes.io/frame-deny: "true"
+    ingress.kubernetes.io/hsts-max-age: "315360000"
+    ingress.kubernetes.io/protocol: http
+    ingress.kubernetes.io/referrer-policy: strict-origin
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/preserve-host: "true"
+  host: auth.example.bdrk.ai
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+forward_auth_config:
+  log_level: info
+  log_format: text
+
+  cookie_domain: example.bdrk.ai
+  insecure_cookie: false
+  lifetime: 36000
+  url_path: /_oauth
+
+  # Auth provider can be either "oidc" or "google"
+  provider: oidc
+  client_id: fixme
+
+  # Google provider specific
+  prompt: ""
+
+  # OIDC provider specific
+  issuer_url: https://example.auth0.com/
+
+  # Secrets
+  secret: ""
+  client_secret: ""

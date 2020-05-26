@@ -1,0 +1,17 @@
+{{- if .Values.podSecurityPolicies -}}
+apiVersion: extensions/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: {{ include "traefik-forward-auth.fullname" . }}
+  {{- with .Values.podSecurityPolicies.annotations }}
+  annotations:
+    {{ toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "traefik-forward-auth.labels" . | nindent 4 }}
+    {{- with .Values.podSecurityPolicies.labels }}
+    {{ toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  {{ toYaml .Values.podSecurityPolicies.spec | nindent 2 }}
+{{- end -}}

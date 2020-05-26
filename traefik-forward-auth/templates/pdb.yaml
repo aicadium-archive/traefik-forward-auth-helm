@@ -1,0 +1,11 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "traefik-forward-auth.fullname" . }}
+  labels:
+    {{- include "traefik-forward-auth.labels" . | nindent 4 }}
+spec:
+  minAvailable: {{ .Values.podDisruptionBudget.minAvailable }}
+  selector:
+    matchLabels:
+      {{- include "traefik-forward-auth.selectorLabels" . | nindent 6 }}

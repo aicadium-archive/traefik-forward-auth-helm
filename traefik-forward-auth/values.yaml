@@ -32,6 +32,51 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
+podSecurityPolicies:
+  annotations:
+    seccomp.security.alpha.kubernetes.io/allowedProfileNames: "docker/default,runtime/default"
+    apparmor.security.beta.kubernetes.io/allowedProfileNames: "runtime/default"
+    seccomp.security.alpha.kubernetes.io/defaultProfileName: "runtime/default"
+    apparmor.security.beta.kubernetes.io/defaultProfileName: "runtime/default"
+  labels: {}
+  spec:
+    privileged: false
+    allowPrivilegeEscalation: false
+    volumes:
+      - configMap
+      - emptyDir
+      - projected
+      - secret
+      - downwardAPI
+    hostNetwork: false
+    hostIPC: false
+    hostPID: false
+    fsGroup:
+      ranges:
+      - max: 65535
+        min: 1
+      rule: MustRunAs
+    runAsGroup:
+      ranges:
+      - max: 65535
+        min: 1
+      rule: MustRunAs
+    runAsUser:
+      ranges:
+      - max: 65535
+        min: 1
+      rule: MustRunAs
+    supplementalGroups:
+      ranges:
+      - max: 65535
+        min: 1
+      rule: MustRunAs
+    readOnlyRootFilesystem: true
+    seLinux:
+      rule: RunAsAny
+    forbiddenSysctls:
+      - '*'
+
 priorityClassName: ""
 
 podDisruptionBudget:

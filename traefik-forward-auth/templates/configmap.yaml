@@ -62,4 +62,7 @@ data:
 
     # Client ID [$PROVIDERS_OIDC_CLIENT_ID]
     providers.oidc.client-id = {{ .Values.forward_auth_config.client_id }}
+
+    # Logout redirect URL used to clear OIDC cookie
+    logout-redirect = {{ .Values.forward_auth_config.issuer_url }}logout?client_id={{ .Values.forward_auth_config.client_id }}
     {{- end }}

@@ -39,6 +39,9 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
+            {{- with .Values.env }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
             - name: CONFIG
               value: /config/config.ini
             {{- if eq .Values.forward_auth_config.provider "google" }}

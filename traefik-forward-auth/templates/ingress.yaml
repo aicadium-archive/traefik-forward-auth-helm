@@ -1,10 +1,10 @@
 {{- if .Values.ingress.enabled -}}
 {{- $fullName := include "traefik-forward-auth.fullname" . -}}
 {{- $svcPort := .Values.service.port -}}
-{{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.Version }}
+apiVersion: networking.k8s.io/v1
+{{- else }}
 apiVersion: networking.k8s.io/v1beta1
-{{- else -}}
-apiVersion: extensions/v1beta1
 {{- end }}
 kind: Ingress
 metadata:
@@ -26,6 +26,19 @@ spec:
       secretName: {{ .secretName }}
     {{- end }}
   {{- end }}
+{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.Version }}
+  rules:
+    - host: {{ .Values.ingress.host | quote }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ $svcPort }}
+{{- else }}
   rules:
     - host: {{ .Values.ingress.host | quote }}
       http:
@@ -33,4 +46,5 @@ spec:
           - backend:
               serviceName: {{ $fullName }}
               servicePort: {{ $svcPort }}
-  {{- end }}
+{{- end }}
+{{- end }}

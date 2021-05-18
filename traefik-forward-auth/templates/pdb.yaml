@@ -1,3 +1,4 @@
+{{- if .Values.podDisruptionBudget.enabled }}
 apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
@@ -9,3 +10,4 @@ spec:
   selector:
     matchLabels:
       {{- include "traefik-forward-auth.selectorLabels" . | nindent 6 }}
+{{- end }}

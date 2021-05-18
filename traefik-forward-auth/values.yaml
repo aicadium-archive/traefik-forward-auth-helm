@@ -80,6 +80,7 @@ podSecurityPolicies:
 priorityClassName: ""
 
 podDisruptionBudget:
+  enabled: false
   minAvailable: 1
 
 service:
